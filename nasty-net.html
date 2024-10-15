@@ -82,7 +82,7 @@
 		uno.forEach((el, i) => dos[i] = Math.round(rand1() * uno[i]));
 		uno.forEach((el, i) => tres[i] = Math.round(rand2() * dos[i]));
 
-		ctx.fillStyle = 'rgba(255, 0, 0, 0.05)';
+		ctx.fillStyle = 'rgba(255, 0, 0, 1)';
 
 		try {
 			uno.forEach((el, i) => ctx.fillRect(
@@ -94,7 +94,7 @@
 		}
 	}
 
-	setIntervalX(main, 1000, 30);
+	setIntervalX(main, 1000, 1);
 
 </script>
 
