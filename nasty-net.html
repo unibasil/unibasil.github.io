@@ -6,16 +6,16 @@
     <script src="./uiks.js"></script>
     <style>
         body { background-color: rgb(240, 240, 240); }
-        #my-chart { width: 1024px; height: 1024px; }
+        #my-chart { width: 512px; height: 512px; }
     </style>
 </head>
 <body>
 
-<canvas id="my-chart" width="1024" height="1024"></canvas>
+<canvas id="my-chart" width="512" height="512"></canvas>
 
 <script>
 
-    const SIZE = 1024;
+    const SIZE = 512;
 
 	const median = (arr) => {
 		const mid = Math.floor(arr.length / 2);
@@ -82,7 +82,7 @@
 		uno.forEach((el, i) => dos[i] = Math.round(rand1() * uno[i]));
 		uno.forEach((el, i) => tres[i] = Math.round(rand2() * dos[i]));
 
-		ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+		ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
 
 		try {
 			uno.forEach((el, i) => ctx.fillRect(
@@ -94,7 +94,7 @@
 		}
 	}
 
-	setIntervalX(main, 1000, 1);
+	setIntervalX(main, 1000, 5);
 
 </script>
 
