@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chart</title>
+    <script src="./uiks.js"></script>
+    <style>
+        body { background-color: rgb(240, 240, 240); }
+        #my-chart { width: 1024px; height: 1024px; }
+    </style>
+</head>
+<body>
+
+<canvas id="my-chart" width="1024" height="1024"></canvas>
+
+<script>
+
+    const SIZE = 1024;
+
+	const median = (arr) => {
+		const mid = Math.floor(arr.length / 2);
+		const sortedArr = arr.sort((a, b) => a - b);
+		if (arr.length % 2 === 0) {
+			return (sortedArr[mid - 1] + sortedArr[mid]) / 2;
+		} else {
+			return sortedArr[mid];
+		}
+	}
+
+	const setIntervalX = (callback, delay, repetitions, onCompleted) => {
+		let x = 0;
+		let intervalID = window.setInterval(() => {
+			callback();
+			if (++x === repetitions) {
+				window.clearInterval(intervalID);
+				if (onCompleted) {
+					onCompleted();
+				}
+			}
+		}, delay);
+	}
+
+	const randomNormalByBoxMuller = (min, max, skew) => {
+		let u = 0, v = 0;
+		while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+		while (v === 0) v = Math.random();
+		let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+
+		num = num / 10.0 + 0.5; // Translate to 0 -> 1
+		if (num > 1 || num < 0) num = randomNormalByBoxMuller(min, max, skew); // resample between 0 and 1 if out of range
+		num = Math.pow(num, skew); // Skew
+		num *= max - min; // Stretch to fill range
+		num += min; // offset to min
+		return num;
+	}
+
+	function rand1() {
+		return randomNormalByBoxMuller(0, 1, 1);
+	}
+
+	function rand2() {
+		return randomNormalByBoxMuller(0, 1, 1);
+	}
+
+	/// ---
+
+	console.log(`Статистика по УИКам`);
+	console.log(`Max "size": ${Math.max(...uno)}`);
+	console.log(`Min "size": ${Math.min(...uno)}`);
+	console.log(`Median "size": ${median(uno)}`);
+
+	const ctx = document.getElementById('my-chart').getContext('2d');
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, SIZE, SIZE);
+
+	function main() {
+
+		const dos = [];
+		const tres = [];
+		uno.forEach((el, i) => dos[i] = Math.round(rand1() * uno[i]));
+		uno.forEach((el, i) => tres[i] = Math.round(rand2() * dos[i]));
+
+		ctx.fillStyle = 'rgba(255, 0, 0, 0.05)';
+
+		try {
+			uno.forEach((el, i) => ctx.fillRect(
+				SIZE * dos[i] / uno[i],
+				SIZE * tres[i] / dos[i], 1, 1)
+            );
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	setIntervalX(main, 1000, 10);
+
+</script>
+
+</body>
+</html>
