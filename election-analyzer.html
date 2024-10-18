@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Election Analyzer</title>
+    <script src="./election-data.js"></script>
+    <style>
+        body { background-color: rgb(240, 240, 240); }
+        #my-chart { width: 2048px; height: 2048px; }
+        .pane { margin-left: 40%; padding: 8px;}
+        button {
+            border: 0;
+            line-height: 2.5;
+            padding: 0 16px;
+            font-size: 1em;
+            text-align: center;
+            color: white;
+            text-shadow: 1px 1px 1px #000;
+            border-radius: 10px;
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+
+<div class="pane">
+    <button onclick="main(0)">As is</button>
+    <button onclick="main(1)">1%</button>
+    <button onclick="main(5)">5%</button>
+    <button onclick="main(10)">10%</button>
+    <button onclick="main(20)">20%</button>
+    <button onclick="setIntervalX(() => main(20, false), 100, 100)">100 rounds of 20% noised data</button>
+</div>
+<div>
+    <canvas id="my-chart" width="2048" height="2048"></canvas>
+</div>
+
+<script>
+
+    const SIZE = 2048;
+
+    const setIntervalX = (callback, delay, repetitions, onCompleted) => {
+        let x = 0;
+        let intervalID = window.setInterval(() => {
+            callback();
+            if (++x === repetitions) {
+                window.clearInterval(intervalID);
+                if (onCompleted) {
+                    onCompleted();
+                }
+            }
+        }, delay);
+    }
+
+
+	/// ---
+
+	const ctx = document.getElementById('my-chart').getContext('2d');
+
+	function main(noisePercent, needToClear = true) {
+
+        if (needToClear) {
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, SIZE, SIZE);
+        }
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        try {
+            data.forEach((elem, i) => {
+                const [ a, b, c ] = elem;
+                const bNoise = Math.round((Math.random() * 2 - 1) * a * noisePercent / 100); // шум к b
+                const cNoise = Math.round((Math.random() * 2 - 1) * b * noisePercent / 100); // шум к c
+                ctx.fillRect(
+                    Math.round(SIZE * (b + bNoise) / a),
+                    Math.round(SIZE - SIZE * (c + cNoise) / b), 1, 1);
+            });
+        } catch (e) {
+            console.error(e);
+        }
+
+        // Axis
+        ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+        for (let i = 0; i < 10; i++) {
+            ctx.fillText((i * 10).toString(), SIZE * i / 10, 10);
+            ctx.fillText((i * 10).toString(), SIZE - 20, SIZE - SIZE * i / 10);
+        }
+    }
+
+    main(0);
+
+</script>
+
+</body>
+</html>
